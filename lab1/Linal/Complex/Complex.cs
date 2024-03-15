@@ -57,6 +57,10 @@ namespace app.Linal.Complex
 
         public override string ToString()
         {
+            if (Im == 0)
+            {
+                return Math.Round(Re, 4).ToString();
+            }
             string sign = Im >= 0 ? "+" : "-";
             string res = $"{Math.Round(Re, 4)} {sign} {Math.Abs(Math.Round(Im, 4))}i";
             return res;

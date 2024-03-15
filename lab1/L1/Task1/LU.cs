@@ -43,28 +43,32 @@ namespace app.L1.Task1
                 b[A._swapped[i].Item2] = b[A._swapped[i].Item1] - b[A._swapped[i].Item2];
                 b[A._swapped[i].Item1] -= b[A._swapped[i].Item2];
             }
+
+
+            Matrix exL = new Matrix(A.Cols);
+            Matrix exU = new Matrix(A.Cols);
+
+            for (int i = 0; i < A.Rows; i++)
+            {
+                for (int j = 0; j < A.Rows; j++)
+                {
+                    exL[i, j] = Matrix.GetL(A, i, j);
+                    exU[i, j] = Matrix.GetU(A, i, j);
+                }
+            }
+
             res += "\nMatrix L:\n";
-            for (int i = 0; i < inv.Rows; i++)
-            {
-                for (int j = 0; j < inv.Cols; j++)
-                {
-                    string value = Math.Round(Matrix.GetL(A, i, j), 4).ToString("0.0000");
-                    value = value.PadRight(18);
-                    res += value;
-                }
-                res += "\n";
-            }
+            res += exL.ToString();
+            res += "\n";
             res += "\nMatrix U:\n";
-            for (int i = 0; i < inv.Rows; i++)
-            {
-                for (int j = 0; j < inv.Cols; j++)
-                {
-                    string value = Math.Round(Matrix.GetU(A, i, j), 4).ToString("0.0000");
-                    value = value.PadRight(18);
-                    res += value;
-                }
-                res += "\n";
-            }
+            res += exU.ToString();
+            res += "\n";
+
+            Matrix mul = exL * exU;
+            res += "\nL*U:\n";
+            res += mul.ToString();
+            res += "\n";
+
             Vector z = new Vector(inv.Cols);
             z[0] = b[0];
             for (int i = 1; i < inv.Rows; i++)
@@ -92,7 +96,7 @@ namespace app.L1.Task1
             }
             res += "\nVector x (answer):\n";
             res += x.ToString();
-            res += "\n";
+            res += "\n\n\n";
             return res;
         }        
     }

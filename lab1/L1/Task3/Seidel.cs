@@ -141,7 +141,7 @@ namespace app.L1.Task3
             double estK = (Math.Log10(epsilon) - Math.Log10(gamma.Norm()) + 
                 Math.Log10(1 - alpha.Norm())) / Math.Log10(alpha.Norm());
             res += estK.ToString();
-            res += "\n";
+            res += "\n\n\n";
             return res;
         }
     }

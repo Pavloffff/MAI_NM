@@ -50,7 +50,7 @@ namespace app.L1.Task2
 
             res += "\n\nVector x (answer):\n";
             res += x.ToString();
-
+            res += "\n\n\n";
             return res;
         }
     }

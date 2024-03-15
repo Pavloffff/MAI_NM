@@ -146,6 +146,7 @@ namespace app.L1.Task4
                 }
                 res += ")\n";
             }
+            res += "\n\n\n";
 
             return res;
         }

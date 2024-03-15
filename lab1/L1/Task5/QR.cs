@@ -70,6 +70,14 @@ namespace app.L1.Task5
             int n = A.Rows;
             Matrix prevA = A;
             int iter = 0;
+            bool flag;
+
+            List<Complex> current = new List<Complex>();
+            List<Complex> prev = new List<Complex>();
+            for (int i = 0; i < n; i++)
+            {
+                prev.Add(new Complex(0, 0));
+            }
 
             while (true)
             {
@@ -84,94 +92,45 @@ namespace app.L1.Task5
                 res += "\nMatrix A:\n";
                 res += A.ToString();
 
-                bool flag = true;
-                for (int i = 0; i < n - 1; i++)
+                for (int i = 0; i < n; i++)
                 {
-                    for (int j = i + 1; j < n; j++)
+                    if (i == n - 1 || Math.Abs(A[i + 1, i]) < epsilon)
                     {
-                        if (Math.Abs(A[j, i]) > epsilon)
-                        {
-                            res += $"\n{Math.Abs(A[j, i])}    {epsilon}\n";
-                            flag = false;
-                            break;
-                        }
+                        current.Add(new Complex(A[i, i], 0));
                     }
-                    if (!flag)
+                    else
                     {
-                        Quadratic solverCur = new Quadratic(1, (-1) * (A[i + 1, i + 1] + A[i, i]), 
-                            A[i, i] * A[i + 1, i + 1] - A[i, i + 1] * A[i + 1, i]);
-                        var lambdaCur = solverCur.Solve();
-                        
-                        
-
-                        res += $"\nBlock:\n{A[i, i]}    {A[i, i + 1]}\n";
-                        res += $"{A[i + 1, i]}    {A[i + 1, i + 1]}\n";
-                        res += "\nlambda^(";
-                        res += iter.ToString();
-                        res += "):\n";
-                        res += lambdaCur.Item1.ToString();
-                        res += "     ";
-                        res += lambdaCur.Item2.ToString();
-                        res += "\n";
-
-                        Quadratic solverPrev = new Quadratic(1, (-1) * (prevA[i + 1, i + 1] + prevA[i, i]), 
-                            prevA[i, i] * prevA[i + 1, i + 1] - prevA[i, i + 1] * prevA[i + 1, i]);
-                        var lambdaPrev = solverPrev.Solve();
-
-                        res += "\nlambda^(";
-                        res += (iter - 1).ToString();
-                        res += "):\n";
-                        res += lambdaPrev.Item1.ToString();
-                        res += "     ";
-                        res += lambdaPrev.Item2.ToString();
-                        res += "\n";
-                        res += Complex.Abs(lambdaCur.Item1 - lambdaPrev.Item1);
-                        res += "    ";
-                        res += Complex.Abs(lambdaCur.Item2 - lambdaPrev.Item2);
-                        res += "\n";
-
-                        if (Complex.Abs(lambdaCur.Item1 - lambdaPrev.Item1) < epsilon &&
-                            Complex.Abs(lambdaCur.Item2 - lambdaPrev.Item2) < epsilon)
-                        {
-                            flag = true;
-                            i++;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                        //if (Math.Abs(A[i, i + 1] * A[i + 1, i] - 
-                        //    prevA[i, i + 1] * prevA[i + 1, i]) < epsilon)
-                        //{
-                        //    flag = true;
-                        //    i++;
-                        //}
-                        //else
-                        //{
-                        //    break;
-                        //}
+                        double a = 1;
+                        double b = (-1) * (A[i + 1, i + 1] + A[i, i]);
+                        double c = A[i, i] * A[i + 1, i + 1] - A[i, i + 1] * A[i + 1, i];
+                        Quadratic solverCur = new Quadratic(a, b, c);
+                        var lambdas = solverCur.Solve();
+                        current.Add(lambdas.Item1);
+                        current.Add(lambdas.Item2);
+                        i++;
                     }
                 }
 
-                res += flag.ToString();
-                res += "\n";
+                flag = true;
+                for (int j = 0; j < current.Count; j++)
+                {
+                    if (Complex.Abs(current[j] - prev[j]) > epsilon)
+                    {
+                        flag = false;
+                    }
+                }
 
                 if (flag)
                 {
                     break;
                 }
 
-                for (int i = 0; i < n; i++)
+                for (int j = 0; j < current.Count; j++)
                 {
-                    for (int j = 0; j < n; j++)
-                    {
-                        prevA[i, j] = A[i, j];
-                    }
+                    prev[j] = current[j];
                 }
-                if (iter > 10)
-                {
-                    break;
-                }
+                current.Clear();
+
                 iter++;
                 res += "\nNumber of iteration: ";
                 res += iter.ToString();
@@ -184,43 +143,14 @@ namespace app.L1.Task5
             res += "\nMatrix A:\n";
             res += A.ToString();
 
-            bool endFlag = true;
-
             res += "\nEigenValues:\n";
-            for (int i = 0; i < n - 1; i++)
+            for (int i = 0; i < prev.Count; i++)
             {
-                endFlag = true;
-                for (int j = i + 1; j < n; j++)
-                {
-                    if (A[i, j] > epsilon)
-                    {
-                        endFlag = false;
-                        break;
-                    }
-                }
-                if (!endFlag)
-                {
-                    Quadratic solver = new Quadratic(1, (-1) * (A[i + 1, i + 1] + A[i, i]), 
-                            A[i, i] * A[i + 1, i + 1] - A[i, i + 1] * A[i + 1, i]);
-                    var complexPair = solver.Solve();
-                    res += complexPair.Item1;
-                    res += "    ";
-                    res += complexPair.Item2;
-                    res += "    ";
-                    i++;
-                }
-                else
-                {
-                    res += Math.Round(A[i, i], 4);
-                    res += "    ";
-                }
+                res += prev[i].ToString();
+                res += "     ";
             }
-            if (endFlag)
-            {
-                res += Math.Round(A[n - 1, n - 1], 4);
-                res += "    ";
-            }
-            res += "\n";
+            
+            res += "\n\n\n";
             return res;
         }
     }

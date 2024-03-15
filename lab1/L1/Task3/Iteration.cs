@@ -122,7 +122,7 @@ namespace app.L1.Task3
             res += k.ToString();
             res += "\n\nA priori estimate of the number of iterations: K + 1 >= ";
             res += estK.ToString();
-            res += "\n";
+            res += "\n\n\n";
             return res;
         }
     }

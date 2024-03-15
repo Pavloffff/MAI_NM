@@ -231,12 +231,12 @@ namespace app
             {
                 testA = new List<List<double>>()
                 {
-                    new List<double>() { 8, 8, -5, -8 },
-                    new List<double>() { 8, -5, 9, -8 },
-                    new List<double>() { 5, -4, -6, -2 },
-                    new List<double>() { 8, 3, 6, 6 }
+                    new List<double>() { 7, -5, 6, 7 },
+                    new List<double>() { 8, -1, -9, 1 },
+                    new List<double>() { -3, 8, 8, 8 },
+                    new List<double>() { 2, -3, 6, -4 }
                 };
-                testB = new double[] { 13, 38, 14, -95 };
+                testB = new double[] { 120, 31, 6, 25 };
             }
             else if (methodComboBox.Text == "TMA")
             {
@@ -276,9 +276,9 @@ namespace app
             {
                 testA = new List<List<double>>()
                 {
-                    new List<double>() { -6, 1, -4 },
-                    new List<double>() { -6, 8, -2 },
-                    new List<double>() { 2, -9, 5 }
+                    new List<double>() { 1, 3, 1 },
+                    new List<double>() { 1, 1, 4 },
+                    new List<double>() { 4, 3, 1 }
                 };
                 testB = new double[] { 0, 0, 0 };
             }
