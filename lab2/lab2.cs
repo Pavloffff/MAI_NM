@@ -144,12 +144,24 @@ namespace app
             {
                 textBoxEq1.Text = "a * x1 - cos(x2) = 0";
                 textBoxEq2.Text = "a * x2 - exp(x1) = 0";
+                textBoxLeftRangeX.Text = (-0.1).ToString();
+                textBoxRightRangeX.Text = (0.9).ToString();
+                leftX = -0.1;
+                rightX = 0.9;
+                textBoxLeftRangeY.Text = (1).ToString();
+                textBoxRightRangeY.Text = (2).ToString();
+                leftY = 1;
+                rightY = 2;
                 var t2 = new L2.Task2(textBoxEq1.Text, textBoxEq2.Text, leftX, rightX, leftY, 
                     rightY, a, epsilon, iterations);
                 solve = String.Empty;
                 if (comboBoxMethod.Text == "Newton")
                 {
                     solve = t2.Newton();
+                }
+                else if (comboBoxMethod.Text == "Iterations")
+                {
+                    solve = t2.Iterations();
                 }
                 labelSolution.Text += solve;
             }
@@ -179,6 +191,10 @@ namespace app
                 if (comboBoxMethod.Text == "Newton")
                 {
                     solve = t2.Newton();
+                }
+                else if (comboBoxMethod.Text == "Iterations")
+                {
+                    solve = t2.Iterations();
                 }
                 labelSolution.Text += solve;
             }

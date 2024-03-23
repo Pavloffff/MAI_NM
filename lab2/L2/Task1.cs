@@ -140,7 +140,7 @@ namespace app.L2
 
             res += "Iterations Method:\n\n";
 
-            double lambda = 2 / (M + m), q = Math.Abs((M - m) / (M + m));
+            double lambda = 2 / (M + m), q = Math.Abs(M - m) / Math.Abs(M + m);
             res += "lambda = ";
             res += lambda.ToString();
             res += "\n";
