@@ -609,6 +609,24 @@
   <data name="panel1.AutoScroll" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
+  <data name="labelSolution.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="labelSolution.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Microsoft Sans Serif, 14.25pt</value>
+  </data>
+  <data name="labelSolution.Location" type="System.Drawing.Point, System.Drawing">
+    <value>3, 10</value>
+  </data>
+  <data name="labelSolution.Size" type="System.Drawing.Size, System.Drawing">
+    <value>122, 24</value>
+  </data>
+  <data name="labelSolution.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="labelSolution.Text" xml:space="preserve">
+    <value>Solution here</value>
+  </data>
   <data name="&gt;&gt;labelSolution.Name" xml:space="preserve">
     <value>labelSolution</value>
   </data>
@@ -641,33 +659,6 @@
   </data>
   <data name="&gt;&gt;panel1.ZOrder" xml:space="preserve">
     <value>16</value>
-  </data>
-  <data name="labelSolution.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="labelSolution.Location" type="System.Drawing.Point, System.Drawing">
-    <value>3, 10</value>
-  </data>
-  <data name="labelSolution.Size" type="System.Drawing.Size, System.Drawing">
-    <value>69, 13</value>
-  </data>
-  <data name="labelSolution.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="labelSolution.Text" xml:space="preserve">
-    <value>Solution here</value>
-  </data>
-  <data name="&gt;&gt;labelSolution.Name" xml:space="preserve">
-    <value>labelSolution</value>
-  </data>
-  <data name="&gt;&gt;labelSolution.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;labelSolution.Parent" xml:space="preserve">
-    <value>panel1</value>
-  </data>
-  <data name="&gt;&gt;labelSolution.ZOrder" xml:space="preserve">
-    <value>0</value>
   </data>
   <data name="textBoxEpsilon.Location" type="System.Drawing.Point, System.Drawing">
     <value>511, 89</value>

@@ -144,16 +144,24 @@ namespace app
             {
                 textBoxEq1.Text = "a * x1 - cos(x2) = 0";
                 textBoxEq2.Text = "a * x2 - exp(x1) = 0";
+                var t2 = new L2.Task2(textBoxEq1.Text, textBoxEq2.Text, leftX, rightX, leftY, 
+                    rightY, a, epsilon, iterations);
+                solve = String.Empty;
+                if (comboBoxMethod.Text == "Newton")
+                {
+                    solve = t2.Newton();
+                }
+                labelSolution.Text += solve;
             }
         }
 
         private void buttonSolve_Click(object sender, EventArgs e)
         {
             labelSolution.Text = string.Empty;
+            string solve = String.Empty;
             if (comboBoxTask.Text == "Equation 1")
             {
                 var t1 = new L2.Task1(textBoxEq1.Text, leftX, rightX, a, epsilon, iterations);
-                string solve = String.Empty;
                 if (comboBoxMethod.Text == "Newton")
                 {
                     solve = t1.Newton();
@@ -161,6 +169,16 @@ namespace app
                 else if (comboBoxMethod.Text == "Iterations")
                 {
                     solve = t1.Iterations();
+                }
+                labelSolution.Text += solve;
+            }
+            else if (comboBoxTask.Text == "System")
+            {
+                var t2 = new L2.Task2(textBoxEq1.Text, textBoxEq2.Text, leftX, rightX, leftY, 
+                    rightY, a, epsilon, iterations);
+                if (comboBoxMethod.Text == "Newton")
+                {
+                    solve = t2.Newton();
                 }
                 labelSolution.Text += solve;
             }
