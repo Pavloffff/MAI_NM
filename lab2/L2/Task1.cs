@@ -111,7 +111,7 @@ namespace app.L2
             }
 
             res += "\nAnswer: ";
-            res += Math.Round(xk, 4).ToString("0.0000");
+            res += xk;
             res += "\n";
 
             return res;
@@ -121,32 +121,22 @@ namespace app.L2
         {
             string res = string.Empty;
             //int prec = BitConverter.GetBytes(decimal.GetBits((decimal)epsilon)[3])[2];
-            double m = Int32.MaxValue, M = Int32.MinValue;
+            double fLeft = solver.Solve(functionTokens, left, 0, a);
+            double fLeftRight = solver.Solve(functionTokens, left + epsilon, 0, a);
+            double dfLeft = (fLeftRight - fLeft) / epsilon;
 
-            for (double i = left; i <= right; i += epsilon)
-            {
-                double fi = solver.Solve(functionTokens, i, 0, a);
-                double fiRight = solver.Solve(functionTokens, i + epsilon, 0, a);
-                double df = (fiRight - fi) / epsilon;
-                if (df < m)
-                {
-                    m = df;
-                }
-                if (df > M)
-                {
-                    M = df;
-                }
-            }
+            double fRight = solver.Solve(functionTokens, right, 0, a);
+            double fRightLeft = solver.Solve(functionTokens, right - epsilon, 0, a);
+            double dfRight = (fRight - fRightLeft) / epsilon;
+            
+            int sign = dfRight >= 0 ? 1 : -1;
+            double lambda = sign / Math.Max(Math.Abs(dfLeft), Math.Abs(dfRight));   
 
             res += "Iterations Method:\n\n";
 
-            double lambda = 2 / (M + m), q = Math.Abs(M - m) / Math.Abs(M + m);
             res += "lambda = ";
             res += lambda.ToString();
             res += "\n";
-            res += "q = ";
-            res += q.ToString();
-            res += "\n\n";
 
             string value = "k";
             value = value.PadRight(pad);
@@ -184,7 +174,7 @@ namespace app.L2
                 xk = prevXk - lambda * solver.Solve(functionTokens, prevXk, 0, a);
 
 
-                if (Math.Abs(xk - prevXk) <= ((1 - q) / q) * epsilon)
+                if (Math.Abs(xk - prevXk) <= epsilon)
                 {
                     value = "ok";
                     value = value.PadRight(pad);
@@ -204,7 +194,7 @@ namespace app.L2
             }
 
             res += "\nAnswer: ";
-            res += Math.Round(xk, 4).ToString("0.0000");
+            res += xk;
             res += "\n";
 
             return res;

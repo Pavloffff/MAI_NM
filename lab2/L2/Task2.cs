@@ -52,51 +52,94 @@ namespace app.L2
             this.iterations = iterations;
         }
 
-        public string Newton()
+        private string Str(double value)
+        {
+            return Math.Round(value, 4).ToString("0.0000");
+        }
+
+        private string PrintStringNewton(
+            string k, string x1k, string f1, string df1dx1, 
+            string df1dx2, string detA1, string detA2, string detJ,
+            string x2k, string f2, string df2dx1, string df2dx2)
         {
             string res = string.Empty;
-            res += "Newton Method:\n\n";
-            string value = "k";
+            string value = k;
             value = value.PadRight(pad);
             res += value;
-            value = "x1(k)";
+            value = x1k;
             value = value.PadRight(pad);
             res += value;
-            value = "f1(x1, x2)";
+            value = f1;
             value = value.PadRight(pad);
             res += value;
-            value = "df1dx1";
+            value = df1dx1;
             value = value.PadRight(pad);
             res += value;
-            value = "df1dx2";
+            value = df1dx2;
             value = value.PadRight(pad);
             res += value;
-            value = "det(A1)";
+            value = detA1;
             value = value.PadRight(pad);
             res += value;
-            value = "det(A2)";
+            value = detA2;
             value = value.PadRight(pad);
             res += value;
-            value = "det(J)";
+            value = detJ;
             value = value.PadRight(pad);
             res += value;
             res += "\n";
             value = string.Empty;
             value = value.PadRight(pad + 1);
             res += value;
-            value = "x2(k)";
+            value = x2k;
             value = value.PadRight(pad);
             res += value;
-            value = "f2(x1, x2)";
+            value = f2;
             value = value.PadRight(pad);
             res += value;
-            value = "df2dx1";
+            value = df2dx2;
             value = value.PadRight(pad);
             res += value;
-            value = "df2dx2";
+            res += "\n";
+            return res;
+        }
+
+        private string PrintStringIterations(
+            string k, string x1k, string f1, string x2k, string f2)
+        {
+            string res = string.Empty;
+            string value = k;
             value = value.PadRight(pad);
             res += value;
-            res += "\n\n";
+            value = x1k;
+            value = value.PadRight(pad);
+            res += value;
+            value = f1;
+            value = value.PadRight(pad);
+            res += value;
+            res += "\n";
+            value = string.Empty;
+            value = value.PadRight(pad + 1);
+            res += value;
+            value = x2k;
+            value = value.PadRight(pad);
+            res += value;
+            value = f2;
+            value = value.PadRight(pad);
+            res += value;
+            res += "\n";
+            return res;
+        }
+
+        public string Newton()
+        {
+            string res = string.Empty;
+            res += "Newton Method:\n\n";
+            res += PrintStringNewton(
+                "k", "x1(k)", "f1(x1, x2)", "df1dx1", "df1dx2", 
+                "det(A1)", "det(A2)", "det(J)", "x2(k)", "f2(x1, x2)",
+                "df2dx1", "df2dx2");
+            res += "\n";
 
             double xk = (leftX + rightX) / 2;
             double yk = (leftY + rightY) / 2;
@@ -139,47 +182,10 @@ namespace app.L2
                 A2k[1, 1] = f2;
                 double detA2k = A2k[0, 0] * A2k[1, 1] - A2k[0, 1] * A2k[1, 0];
 
-                value = iter.ToString();
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(xk, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(f1, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(df1dx, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(df1dy, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(detA1k, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(detA2k, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(detJk, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                res += "\n";
-                value = string.Empty;
-                value = value.PadRight(pad + 1);
-                res += value;
-                value = Math.Round(yk, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(f2, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(df2dx, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(df2dy, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                res += "\n";
+                res += PrintStringNewton(
+                    iter.ToString(), Str(xk), Str(f1), Str(df1dx), 
+                    Str(df1dy), Str(detA1k), Str(detA2k), Str(detJk), 
+                    Str(yk), Str(f2), Str(df2dx), Str(df2dy));
 
                 xk -= detA1k / detJk;
                 yk -= detA2k / detJk;
@@ -194,12 +200,12 @@ namespace app.L2
                 iter++;
             }
 
-            res += "\nAnswer: ";
+            res += "\nAnswer:\n\n";
 
-            res += Math.Round(xk, 4).ToString("0.0000");
-            res += "     ";
-            res += Math.Round(yk, 4).ToString("0.0000");
-
+            res += "x = ";
+            res += xk;
+            res += "\ny = ";
+            res += yk;
             return res;
         }
 
@@ -207,69 +213,13 @@ namespace app.L2
         {
             string res = string.Empty;
 
-            double m = Int32.MaxValue, M = Int32.MinValue;
-            for (double i = leftX; i <= rightX; i += epsilon)
-            {
-                for (double j = leftY; j < rightY; j += epsilon)
-                {
-                    double f1ij = solver.Solve(function1Tokens, i, j, a);
-                    double f1ijrightX = solver.Solve(function1Tokens, i + epsilon, j, a);
-                    double df1dx = (f1ijrightX - f1ij) / epsilon;
-                    double f1rightY = solver.Solve(function1Tokens, i, j + epsilon, a);
-                    double df1dy = (f1rightY - f1ij) / epsilon;
-
-                    double f2ij = solver.Solve(function2Tokens, i, j, a);
-                    double f2ijrightX = solver.Solve(function2Tokens, i + epsilon, j, a);
-                    double df2dx = (f2ijrightX - f2ij) / epsilon;
-                    double f2rightY = solver.Solve(function2Tokens, i, j + epsilon, a);
-                    double df2dy = (f2rightY - f2ij) / epsilon;
-
-                    double norm = Math.Max(Math.Abs(df1dx) + Math.Abs(df1dy),
-                        Math.Abs(df2dx) + Math.Abs(df2dy));
-                    if (norm < m)
-                    {
-                        m = norm;
-                    }
-                    if (norm > M)
-                    {
-                        M = norm;
-                    }
-                }
-            }
-
-            double lambda = 2 / (M + m), q = Math.Abs(M - m) / Math.Abs(M + m);
-
             res += "Iterations Method:\n";
-            res += "lambda = ";
-            res += lambda.ToString();
-            res += "\n";
-            res += "q = ";
-            res += q.ToString();
-            res += "\n\n";
             double xk = (leftX + rightX) / 2;
             double yk = (leftY + rightY) / 2;
             double prevxk = xk, prevyk = yk;
 
-            string value = "k";
-            value = value.PadRight(pad);
-            res += value;
-            value = "x1(k)";
-            value = value.PadRight(pad);
-            res += value;
-            value = "f1(x1, x2)";
-            value = value.PadRight(pad);
-            res += value;
+            res += PrintStringIterations("k", "x1(k)", "f1(x1, x2)", "x2(k)", "f2(x1, x2)");
             res += "\n";
-            value = string.Empty;
-            value = value.PadRight(pad + 1);
-            res += value;
-            value = "x2(k)";
-            value = value.PadRight(pad);
-            res += value;
-            value = "f2(x1, x2)";
-            value = value.PadRight(pad);
-            res += value;
-            res += "\n\n";
 
 
             int iter = 0;
@@ -278,52 +228,43 @@ namespace app.L2
                 double f1 = solver.Solve(function1Tokens, xk, yk, a);
                 double f2 = solver.Solve(function2Tokens, xk, yk, a);
 
-                value = iter.ToString();
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(xk, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(f1, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                res += "\n";
-                value = string.Empty;
-                value = value.PadRight(pad + 1);
-                res += value;
-                value = Math.Round(yk, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(f2, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                res += "\n\n";
+                res += PrintStringIterations(
+                    iter.ToString(), Str(xk), Str(f1), Str(yk), Str(f2));
+                
+                double f1rightX = solver.Solve(function1Tokens, xk + epsilon, yk, a);
+                double df1dx = (f1rightX - f1) / epsilon;
+                double f1rightY = solver.Solve(function1Tokens, xk, yk + epsilon, a);
+                double df1dy = (f1rightY - f1) / epsilon;
 
-                xk -= lambda * f1;
-                yk -= lambda * f2;
+                double f2rightX = solver.Solve(function2Tokens, xk + epsilon, yk, a);
+                double df2dx = (f2rightX - f2) / epsilon;
+                double f2rightY = solver.Solve(function2Tokens, xk, yk + epsilon, a);
+                double df2dy = (f2rightY - f2) / epsilon;
 
-                if (Math.Max(Math.Abs(xk - prevxk), Math.Abs(yk - prevyk)) >= (1 - q) * epsilon / q)
+                Matrix Jk = new Matrix(2);
+                Jk[0, 0] = df1dx;
+                Jk[0, 1] = df1dy;
+                Jk[1, 0] = df2dx;
+                Jk[1, 1] = df2dy;
+                double detJk = Jk[0, 0] * Jk[1, 1] - Jk[0, 1] * Jk[1, 0];
+                Matrix T = new Matrix(2);
+                T[0, 0] = Jk[1, 1];
+                T[0, 1] = -Jk[1, 0];
+                T[1, 0] = -Jk[0, 1];
+                T[1, 1] = Jk[0, 0];
+                T *= (1 / detJk);
+
+                xk = prevxk - (f1 * T[0, 0] + f2 * T[0, 1]);
+                yk = prevyk - (f1 * T[1, 0] + f2 * T[1, 1]);
+
+                //xk -= lambda * f1;
+                //yk -= lambda * f2;
+
+                if (Math.Max(Math.Abs(xk - prevxk), Math.Abs(yk - prevyk)) >= epsilon)
                 {
-                    value = "ok";
-                    value = value.PadRight(pad);
-                    res += value;
-                    value = Math.Round(xk, 4).ToString("0.0000");
-                    value = value.PadRight(pad);
-                    res += value;
-                    value = Math.Round(f1, 4).ToString("0.0000");
-                    value = value.PadRight(pad);
-                    res += value;
+                    res += PrintStringIterations(
+                    "ok", Str(xk), Str(f1), Str(yk), Str(f2));
                     res += "\n";
-                    value = string.Empty;
-                    value = value.PadRight(pad + 1);
-                    res += value;
-                    value = Math.Round(yk, 4).ToString("0.0000");
-                    value = value.PadRight(pad);
-                    res += value;
-                    value = Math.Round(f2, 4).ToString("0.0000");
-                    value = value.PadRight(pad);
-                    res += value;
-                    res += "\n\n";
                     break;
                 }
 
@@ -332,11 +273,12 @@ namespace app.L2
                 iter++;
             }
 
-            res += "\nAnswer: ";
+            res += "\nAnswer:\n\n";
 
-            res += Math.Round(xk, 4).ToString("0.0000");
-            res += "     ";
-            res += Math.Round(yk, 4).ToString("0.0000");
+            res += "x = ";
+            res += xk;
+            res += "\ny = ";
+            res += yk;
 
             return res;
         }
