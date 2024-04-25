@@ -260,6 +260,20 @@ namespace app.Linal
             return res;
         }
 
+        public static Matrix operator *(Matrix A, double c)
+        {
+            int n = A.Rows;
+            Matrix res = new Matrix(n);
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < n; j++)
+                {
+                    res[i, j] = A[i, j] * c;        
+                }
+            }
+            return res;
+        }
+
         public static Matrix operator +(Matrix A, Matrix B)
         {
             Matrix res = new Matrix(A);

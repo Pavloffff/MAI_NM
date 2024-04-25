@@ -144,14 +144,16 @@ namespace app
             {
                 textBoxEq1.Text = "a * x1 - cos(x2) = 0";
                 textBoxEq2.Text = "a * x2 - exp(x1) = 0";
-                textBoxLeftRangeX.Text = (-0.1).ToString();
-                textBoxRightRangeX.Text = (0.9).ToString();
-                leftX = -0.1;
-                rightX = 0.9;
-                textBoxLeftRangeY.Text = (1).ToString();
-                textBoxRightRangeY.Text = (2).ToString();
-                leftY = 1;
-                rightY = 2;
+                // textBoxEq1.Text = "0,1*x1^2+x1+0,2*x2^2-0,3=0";
+                // textBoxEq2.Text = "-0,7+0,2*x1^2+x2-0,1*x1*x2=0";
+                leftX = 0;
+                rightX = 0.5;
+                textBoxLeftRangeX.Text = leftX.ToString();
+                textBoxRightRangeX.Text = rightX.ToString();
+                leftY = 0.5;
+                rightY = 1;
+                textBoxLeftRangeY.Text = leftY.ToString();
+                textBoxRightRangeY.Text = rightY.ToString();
                 var t2 = new L2.Task2(textBoxEq1.Text, textBoxEq2.Text, leftX, rightX, leftY, 
                     rightY, a, epsilon, iterations);
                 solve = String.Empty;

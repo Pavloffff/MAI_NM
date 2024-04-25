@@ -40,30 +40,59 @@ namespace app.L2
             this.iterations = iterations;
         }
 
-        public string Newton()
+        private string Str(double value)
+        {
+            return Math.Round(value, 4).ToString("0.0000");
+        }
+
+        private string PrintStringNewton(string k, string xk, string fxk, string dfxk, string fxkdfxk)
         {
             string res = string.Empty;
+            string value = k;
+            value = value.PadRight(pad);
+            res += value;
+            value = xk;
+            value = value.PadRight(pad);
+            res += value;
+            value = fxk;
+            value = value.PadRight(pad);
+            res += value;
+            value = dfxk;
+            value = value.PadRight(pad);
+            res += value;
+            value = fxkdfxk;
+            value = value.PadRight(pad);
+            res += value;
+            res += "\n";
+            return res;
+        }
+
+        private string PrintStringIterations(string k, string xk, string fxk)
+        {
+            string res = string.Empty;
+            string value = k;
+            value = value.PadRight(pad);
+            res += value;
+            value = xk;
+            value = value.PadRight(pad);
+            res += value;
+            value = fxk;
+            value = value.PadRight(pad);
+            res += value;
+            res += "\n";
+            return res;
+        }
+
+        public string Newton()
+        {
+            string res = string.Empty;  // проверить условие на 2 странице внизу
             double xk = right;
             double prevXk = xk;
             int iter = 0;
 
             res += "Newton Method:\n\n";
-            string value = "k";
-            value = value.PadRight(pad);
-            res += value;
-            value = "x(k)";
-            value = value.PadRight(pad);
-            res += value;
-            value = "f(x(k))";
-            value = value.PadRight(pad);
-            res += value;
-            value = "df(x(k))";
-            value = value.PadRight(pad);
-            res += value;
-            value = "f(x(k))/df(x(k))";
-            value = value.PadRight(pad);
-            res += value;
-            res += "\n\n";
+            res += PrintStringNewton("k", "x(k)", "f(x(k))", "df(x(k))", "f(x(k))/df(x(k))");
+            res += "\n";
 
             while (true)
             {
@@ -82,23 +111,7 @@ namespace app.L2
                 //        (xk - (xk + epsilon))) / ((xk + epsilon) - (xk - epsilon)) * (2 * xk - (xk - epsilon) - (xk + epsilon));
                 double dfxk = (fxk - fxkLeft) / (epsilon);
 
-                value = iter.ToString();
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(xk, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(fxk, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(dfxk, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(-(fxk / dfxk), 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                res += "\n";
-
+                res += PrintStringNewton(iter.ToString(), Str(xk), Str(fxk), Str(dfxk), Str(-(fxk / dfxk)));
                 xk = prevXk - (fxk / dfxk);
 
                 if (Math.Abs(prevXk - xk) < epsilon)
@@ -120,72 +133,109 @@ namespace app.L2
         public string Iterations()
         {
             string res = string.Empty;
-            //int prec = BitConverter.GetBytes(decimal.GetBits((decimal)epsilon)[3])[2];
-            double fLeft = solver.Solve(functionTokens, left, 0, a);
-            double fLeftRight = solver.Solve(functionTokens, left + epsilon, 0, a);
-            double dfLeft = (fLeftRight - fLeft) / epsilon;
+            //int prec = BitConverter.GetBytes(decimal.GetBits((decimal)epsilon)[3])[2]; если 2 производная знакопостоянна это работает, иначе дихотомии
 
-            double fRight = solver.Solve(functionTokens, right, 0, a);
-            double fRightLeft = solver.Solve(functionTokens, right - epsilon, 0, a);
-            double dfRight = (fRight - fRightLeft) / epsilon;
-            
+            double l = left, r = right, step = 1.0 / 3;
+            double fLeft, fLeftRight, dfLeft, fRight, fRightLeft, dfRight;
+            fLeft = solver.Solve(functionTokens, left, 0, a);
+            fLeftRight = solver.Solve(functionTokens, left + epsilon, 0, a);
+            dfLeft = (fLeftRight - fLeft) / epsilon;
+
+            fRight = solver.Solve(functionTokens, right, 0, a);
+            fRightLeft = solver.Solve(functionTokens, right - epsilon, 0, a);
+            dfRight = (fRight - fRightLeft) / epsilon;
+            while (Math.Abs(l - r) > epsilon)
+            {
+                double lk = l + step * (r - l);
+                double rk = r - step * (r - l);
+                fLeft = solver.Solve(functionTokens, lk, 0, a);
+                fLeftRight = solver.Solve(functionTokens, lk + epsilon, 0, a);
+                dfLeft = (fLeftRight - fLeft) / epsilon;
+
+                fRight = solver.Solve(functionTokens, rk, 0, a);
+                fRightLeft = solver.Solve(functionTokens, rk - epsilon, 0, a);
+                dfRight = (fRight - fRightLeft) / epsilon;
+
+                if (Math.Abs(dfLeft) < Math.Abs(dfRight))
+                {
+                    l = lk;
+                }
+                else
+                {
+                    r = rk;
+                }
+            }
+            double maxAbsdfxIdx = (l + r) / 2;
+            fLeft = solver.Solve(functionTokens, maxAbsdfxIdx, 0, a);
+            fLeftRight = solver.Solve(functionTokens, maxAbsdfxIdx + epsilon, 0, a);
+            dfLeft = (fLeftRight - fLeft) / epsilon;
+
             int sign = dfRight >= 0 ? 1 : -1;
-            double lambda = sign / Math.Max(Math.Abs(dfLeft), Math.Abs(dfRight));   
+            double lambda = sign / dfLeft;
+
+            l = left;
+            r = right;
+            double q = 1;
+            while (Math.Abs(l - r) > epsilon)
+            {
+                double lk = l + step * (r - l);
+                double rk = r - step * (r - l);
+                fLeft = solver.Solve(functionTokens, lk, 0, a);
+                fLeftRight = solver.Solve(functionTokens, lk + epsilon, 0, a);
+                dfLeft = (fLeftRight - fLeft) / epsilon;
+                double q1 = 1 - lambda * dfLeft;
+
+                fRight = solver.Solve(functionTokens, rk, 0, a);
+                fRightLeft = solver.Solve(functionTokens, rk - epsilon, 0, a);
+                dfRight = (fRight - fRightLeft) / epsilon;
+                double q2 = 1 - lambda * dfRight;
+
+                if (q1 < q2)
+                {
+                    l = lk;
+                }
+                else
+                {
+                    r = rk;
+                }
+            }
+            double maxQIdx = (r + l) / 2;
+            fLeft = solver.Solve(functionTokens, maxQIdx, 0, a);
+            fLeftRight = solver.Solve(functionTokens, maxQIdx + epsilon, 0, a);
+            dfLeft = (fLeftRight - fLeft) / epsilon;
+            q = 1 - lambda * dfLeft;
 
             res += "Iterations Method:\n\n";
 
             res += "lambda = ";
             res += lambda.ToString();
             res += "\n";
-
-            string value = "k";
-            value = value.PadRight(pad);
-            res += value;
-            value = "x(k)";
-            value = value.PadRight(pad);
-            res += value;
-            value = "f(x(k))";
-            value = value.PadRight(pad);
-            res += value;
+            res += "q = ";
+            res += q.ToString();
             res += "\n\n";
+            res += PrintStringIterations("k", "xk", "f(xk)");
+            res += "\n";
 
             int iter = 0;
             double xk = (left + right) / 2;
             double prevXk = xk;
 
-            // https://dxdy.ru/topic22993.html
             while (true)
             {
                 if (iter > iterations)
                 {
                     break;
                 }
-                value = iter.ToString();
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(xk, 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                value = Math.Round(solver.Solve(functionTokens, xk, 0, a), 4).ToString("0.0000");
-                value = value.PadRight(pad);
-                res += value;
-                res += "\n";
+                res += PrintStringIterations(
+                    iter.ToString(), Str(xk), Str(solver.Solve(functionTokens, xk, 0, a)));
 
                 xk = prevXk - lambda * solver.Solve(functionTokens, prevXk, 0, a);
 
 
-                if (Math.Abs(xk - prevXk) <= epsilon)
+                if ((q / (1 - q)) * Math.Abs(xk - prevXk) <= epsilon)
                 {
-                    value = "ok";
-                    value = value.PadRight(pad);
-                    res += value;
-                    value = Math.Round(xk, 4).ToString("0.0000");
-                    value = value.PadRight(pad);
-                    res += value;
-                    value = Math.Round(solver.Solve(functionTokens, xk, 0, a), 4).ToString("0.0000");
-                    value = value.PadRight(pad);
-                    res += value;
-                    res += "\n";
+                    res += PrintStringIterations(
+                        "ok", Str(xk), Str(solver.Solve(functionTokens, xk, 0, a)));
                     break;
                 }
 

@@ -3,6 +3,7 @@ using app.Linal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -58,7 +59,7 @@ namespace app.L2
         }
 
         private string PrintStringNewton(
-            string k, string x1k, string f1, string df1dx1, 
+            string k, string x1k, string f1, string df1dx1,
             string df1dx2, string detA1, string detA2, string detJ,
             string x2k, string f2, string df2dx1, string df2dx2)
         {
@@ -136,7 +137,7 @@ namespace app.L2
             string res = string.Empty;
             res += "Newton Method:\n\n";
             res += PrintStringNewton(
-                "k", "x1(k)", "f1(x1, x2)", "df1dx1", "df1dx2", 
+                "k", "x1(k)", "f1(x1, x2)", "df1dx1", "df1dx2",
                 "det(A1)", "det(A2)", "det(J)", "x2(k)", "f2(x1, x2)",
                 "df2dx1", "df2dx2");
             res += "\n";
@@ -183,8 +184,8 @@ namespace app.L2
                 double detA2k = A2k[0, 0] * A2k[1, 1] - A2k[0, 1] * A2k[1, 0];
 
                 res += PrintStringNewton(
-                    iter.ToString(), Str(xk), Str(f1), Str(df1dx), 
-                    Str(df1dy), Str(detA1k), Str(detA2k), Str(detJk), 
+                    iter.ToString(), Str(xk), Str(f1), Str(df1dx),
+                    Str(df1dy), Str(detA1k), Str(detA2k), Str(detJk),
                     Str(yk), Str(f2), Str(df2dx), Str(df2dy));
 
                 xk -= detA1k / detJk;
@@ -218,30 +219,188 @@ namespace app.L2
             double yk = (leftY + rightY) / 2;
             double prevxk = xk, prevyk = yk;
 
+            // Получение матрицы Якоби
+            double f1 = solver.Solve(function1Tokens, xk, yk, a);
+            double f2 = solver.Solve(function2Tokens, xk, yk, a);
+
+            double f1rightX = solver.Solve(function1Tokens, xk + epsilon, yk, a);
+            double df1dx = (f1rightX - f1) / epsilon;
+            double f1rightY = solver.Solve(function1Tokens, xk, yk + epsilon, a);
+            double df1dy = (f1rightY - f1) / epsilon;
+
+            double f2rightX = solver.Solve(function2Tokens, xk + epsilon, yk, a);
+            double df2dx = (f2rightX - f2) / epsilon;
+            double f2rightY = solver.Solve(function2Tokens, xk, yk + epsilon, a);
+            double df2dy = (f2rightY - f2) / epsilon;
+
+            Matrix Jk = new Matrix(2);
+            Jk[0, 0] = df1dx;
+            Jk[0, 1] = df1dy;
+            Jk[1, 0] = df2dx;
+            Jk[1, 1] = df2dy;
+
+            // Дихотомия: ищем координату x
+            double lx = leftX, rx = rightX, ly = leftY, ry = rightY, step = 1.0 / 3;
+            while (Math.Abs(lx - rx) > epsilon)
+            {
+                double lk = lx + step * (rx - lx);
+                double rk = rx - step * (rx - lx);
+                double f1Lk = solver.Solve(function1Tokens, lk, yk, a);
+                double f2Lk = solver.Solve(function2Tokens, lk, yk, a);
+
+                double f1rightXLk = solver.Solve(function1Tokens, lk + epsilon, yk, a);
+                double df1dxLk = (f1rightXLk - f1Lk) / epsilon;
+                double f1rightYLk = solver.Solve(function1Tokens, lk, yk + epsilon, a);
+                double df1dyLk = (f1rightYLk - f1Lk) / epsilon;
+
+                double f2rightXLk = solver.Solve(function2Tokens, lk + epsilon, yk, a);
+                double df2dxLk = (f2rightXLk - f2Lk) / epsilon;
+                double f2rightYLk = solver.Solve(function2Tokens, lk, yk + epsilon, a);
+                double df2dyLk = (f2rightYLk - f2Lk) / epsilon;
+
+                // Матрица Якоби для левой точки 
+                Matrix JkLk = new Matrix(2);
+                JkLk[0, 0] = df1dxLk;
+                JkLk[0, 1] = df1dyLk;
+                JkLk[1, 0] = df2dxLk;
+                JkLk[1, 1] = df2dyLk;
+
+                double f1Rk = solver.Solve(function1Tokens, rk, yk, a);
+                double f2Rk = solver.Solve(function2Tokens, rk, yk, a);
+
+                double f1rightXRk = solver.Solve(function1Tokens, rk + epsilon, yk, a);
+                double df1dxRk = (f1rightXRk - f1Rk) / epsilon;
+                double f1rightYRk = solver.Solve(function1Tokens, rk, yk + epsilon, a);
+                double df1dyRk = (f1rightYRk - f1Rk) / epsilon;
+
+                double f2rightXRk = solver.Solve(function2Tokens, rk + epsilon, yk, a);
+                double df2dxRk = (f2rightXRk - f2Rk) / epsilon;
+                double f2rightYRk = solver.Solve(function2Tokens, rk, yk + epsilon, a);
+                double df2dyRk = (f2rightYRk - f2Rk) / epsilon;
+
+                // Матрица Якоби для правой точки
+                Matrix JkRk = new Matrix(2);
+                JkRk[0, 0] = df1dxRk;
+                JkRk[0, 1] = df1dyRk;
+                JkRk[1, 0] = df2dxRk;
+                JkRk[1, 1] = df2dyRk;
+
+                if (JkLk.Norm() < JkRk.Norm())
+                {
+                    lx = lk;
+                }
+                else
+                {
+                    rx = rk;
+                }
+            }
+            double maxXNormJkIdx = (lx + rx) / 2;
+
+            // Дихотомия: ищем координату y
+            while (Math.Abs(ly - ry) > epsilon)
+            {
+                double lk = ly + step * (ry - ly);
+                double rk = ry - step * (ry - ly);
+
+                double f1Lk = solver.Solve(function1Tokens, maxXNormJkIdx, lk, a);
+                double f2Lk = solver.Solve(function2Tokens, maxXNormJkIdx, lk, a);
+
+                double f1rightXLk = solver.Solve(function1Tokens, maxXNormJkIdx + epsilon, lk, a);
+                double df1dxLk = (f1rightXLk - f1Lk) / epsilon;
+                double f1rightYLk = solver.Solve(function1Tokens, maxXNormJkIdx, lk + epsilon, a);
+                double df1dyLk = (f1rightYLk - f1Lk) / epsilon;
+
+                double f2rightXLk = solver.Solve(function2Tokens, maxXNormJkIdx + epsilon, lk, a);
+                double df2dxLk = (f2rightXLk - f2Lk) / epsilon;
+                double f2rightYLk = solver.Solve(function2Tokens, maxXNormJkIdx, lk + epsilon, a);
+                double df2dyLk = (f2rightYLk - f2Lk) / epsilon;
+
+                Matrix JkLk = new Matrix(2);
+                JkLk[0, 0] = df1dxLk;
+                JkLk[0, 1] = df1dyLk;
+                JkLk[1, 0] = df2dxLk;
+                JkLk[1, 1] = df2dyLk;
+
+                double f1Rk = solver.Solve(function1Tokens, maxXNormJkIdx, rk, a);
+                double f2Rk = solver.Solve(function2Tokens, maxXNormJkIdx, rk, a);
+
+                double f1rightXRk = solver.Solve(function1Tokens, maxXNormJkIdx + epsilon, rk, a);
+                double df1dxRk = (f1rightXRk - f1Rk) / epsilon;
+                double f1rightYRk = solver.Solve(function1Tokens, maxXNormJkIdx, rk + epsilon, a);
+                double df1dyRk = (f1rightYRk - f1Rk) / epsilon;
+
+                double f2rightXRk = solver.Solve(function2Tokens, maxXNormJkIdx + epsilon, rk, a);
+                double df2dxRk = (f2rightXRk - f2Rk) / epsilon;
+                double f2rightYRk = solver.Solve(function2Tokens, maxXNormJkIdx, rk + epsilon, a);
+                double df2dyRk = (f2rightYRk - f2Rk) / epsilon;
+
+                Matrix JkRk = new Matrix(2);
+                JkRk[0, 0] = df1dxRk;
+                JkRk[0, 1] = df1dyRk;
+                JkRk[1, 0] = df2dxRk;
+                JkRk[1, 1] = df2dyRk;
+
+                if (JkLk.Norm() < JkRk.Norm())
+                {
+                    ly = lk;
+                }
+                else
+                {
+                    ry = rk;
+                }
+            }
+            double maxYNormJkIdx = (ly + ry) / 2;
+            
+            res += $"{maxXNormJkIdx}    {maxYNormJkIdx}";
+
+            f1 = solver.Solve(function1Tokens, maxXNormJkIdx, maxYNormJkIdx, a);
+            f2 = solver.Solve(function2Tokens, maxXNormJkIdx, maxYNormJkIdx, a);
+
+            f1rightX = solver.Solve(function1Tokens, maxXNormJkIdx + epsilon, maxYNormJkIdx, a);
+            df1dx = (f1rightX - f1) / epsilon;
+            f1rightY = solver.Solve(function1Tokens, maxXNormJkIdx, maxYNormJkIdx + epsilon, a);
+            df1dy = (f1rightY - f1) / epsilon;
+
+            f2rightX = solver.Solve(function2Tokens, maxXNormJkIdx + epsilon, maxYNormJkIdx, a);
+            df2dx = (f2rightX - f2) / epsilon;
+            f2rightY = solver.Solve(function2Tokens, maxXNormJkIdx, maxYNormJkIdx + epsilon, a);
+            df2dy = (f2rightY - f2) / epsilon;
+
+            Jk = new Matrix(2);
+            Jk[0, 0] = df1dx;
+            Jk[0, 1] = df1dy;
+            Jk[1, 0] = df2dx;
+            Jk[1, 1] = df2dy;
+
+            double q = Jk.Norm();
+
+            res += "q = ";
+            res += q.ToString();
+            res += "\n\n";
+
             res += PrintStringIterations("k", "x1(k)", "f1(x1, x2)", "x2(k)", "f2(x1, x2)");
             res += "\n";
-
 
             int iter = 0;
             while (iter <= iterations)
             {
-                double f1 = solver.Solve(function1Tokens, xk, yk, a);
-                double f2 = solver.Solve(function2Tokens, xk, yk, a);
+                f1 = solver.Solve(function1Tokens, xk, yk, a);
+                f2 = solver.Solve(function2Tokens, xk, yk, a);
 
                 res += PrintStringIterations(
                     iter.ToString(), Str(xk), Str(f1), Str(yk), Str(f2));
-                
-                double f1rightX = solver.Solve(function1Tokens, xk + epsilon, yk, a);
-                double df1dx = (f1rightX - f1) / epsilon;
-                double f1rightY = solver.Solve(function1Tokens, xk, yk + epsilon, a);
-                double df1dy = (f1rightY - f1) / epsilon;
 
-                double f2rightX = solver.Solve(function2Tokens, xk + epsilon, yk, a);
-                double df2dx = (f2rightX - f2) / epsilon;
-                double f2rightY = solver.Solve(function2Tokens, xk, yk + epsilon, a);
-                double df2dy = (f2rightY - f2) / epsilon;
+                f1rightX = solver.Solve(function1Tokens, xk + epsilon, yk, a);
+                df1dx = (f1rightX - f1) / epsilon;
+                f1rightY = solver.Solve(function1Tokens, xk, yk + epsilon, a);
+                df1dy = (f1rightY - f1) / epsilon;
 
-                Matrix Jk = new Matrix(2);
+                f2rightX = solver.Solve(function2Tokens, xk + epsilon, yk, a);
+                df2dx = (f2rightX - f2) / epsilon;
+                f2rightY = solver.Solve(function2Tokens, xk, yk + epsilon, a);
+                df2dy = (f2rightY - f2) / epsilon;
+
+                Jk = new Matrix(2);
                 Jk[0, 0] = df1dx;
                 Jk[0, 1] = df1dy;
                 Jk[1, 0] = df2dx;
@@ -257,10 +416,7 @@ namespace app.L2
                 xk = prevxk - (f1 * T[0, 0] + f2 * T[0, 1]);
                 yk = prevyk - (f1 * T[1, 0] + f2 * T[1, 1]);
 
-                //xk -= lambda * f1;
-                //yk -= lambda * f2;
-
-                if (Math.Max(Math.Abs(xk - prevxk), Math.Abs(yk - prevyk)) >= epsilon)
+                if ((q / (1 - q)) * Math.Max(Math.Abs(xk - prevxk), Math.Abs(yk - prevyk)) >= epsilon) // искать q = max(||J||) на области
                 {
                     res += PrintStringIterations(
                     "ok", Str(xk), Str(f1), Str(yk), Str(f2));
