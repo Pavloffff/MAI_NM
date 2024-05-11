@@ -347,8 +347,6 @@ namespace app
                     xGridView.Rows[0].Cells[i].Value = x[i];
                     xGridView.Rows[1].Cells[i].Value = y[i];
                 }
-                xStarTextBox.Text = (0.2).ToString();
-                xStar = 0.2;
                 var t4 = new Task4(x, y, xStar);
                 solveLabel.Text += t4.Run(1);
                 solveLabel.Text += t4.Run(2);

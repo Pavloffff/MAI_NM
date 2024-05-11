@@ -73,14 +73,35 @@ namespace app.L3
                 }
             }
             List<double> range = X.GetRange(1, X.Count - d - 1);
-            int idx = range.BinarySearch(xStar);
+            int left = 0;
+            int right = range.Count - 1;
+            int idx = -1;
+            while (left <= right)
+            {
+                int mid = left + (right - left) / 2;
+                if (range[mid] == xStar)
+                {
+                    idx = mid;
+                    break;
+                }
+                if (range[mid] < xStar)
+                {
+                    idx = mid;
+                    left = mid + 1;
+                }
+                else
+                {
+                    right = mid - 1;
+                }
+            }
+
             if (idx < 0)
             {
-                idx = ~idx;
+                idx = 0;
             }
             if (idx >= range.Count)
             {
-                idx = ~idx - 1;
+                idx = range.Count - 1;
             }
             res += "y";
             for (int i = 0; i < d; i++)
