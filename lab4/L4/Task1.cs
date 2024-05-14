@@ -166,8 +166,8 @@ namespace WindowsFormsApp1.L4
             List<List<double>> table = new List<List<double>>();
 
             double x = x0;
-            double y = solver.Solve(y0Tokens, 0, 0, 0);
-            double z = solver.Solve(z0Tokens, 0, 0, 0);
+            double y = solver.Solve(y0Tokens, x0, 0, 0);
+            double z = solver.Solve(z0Tokens, x0, 0, 0);
 
             table.Add(new List<double> { x });
             table.Add(new List<double> { y });

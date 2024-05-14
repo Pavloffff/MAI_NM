@@ -73,8 +73,10 @@ namespace WindowsFormsApp1
                 fTextBox.Text = "(y - (x - 3) * y') / (x^2 - 1)";
                 yTextBox.Text = "1 * y(0) = 0";
                 zTextBox.Text = "1 * y'(1) + 1 * y(1) = -0,75";
+                pTextBox.Text = "1 / (x^2 - 1)";
+                qTextBox.Text = "-(x - 3) / (x^2 - 1)";
                 exactTextBox.Text = "x - 3 + (1 / (x + 1))";
-                var t2 = new Task2(fTextBox.Text, x0, x1, exactTextBox.Text, yTextBox.Text, zTextBox.Text, h);
+                var t2 = new Task2(fTextBox.Text, x0, x1, exactTextBox.Text, yTextBox.Text, zTextBox.Text, h, pTextBox.Text, qTextBox.Text);
                 solveLabel.Text += t2.Run();
             }
         }
@@ -90,7 +92,7 @@ namespace WindowsFormsApp1
             }
             else if (methodComboBox.Text == "Boundary value")
             {
-                var t2 = new Task2(fTextBox.Text, x0, x1, exactTextBox.Text, yTextBox.Text, zTextBox.Text, h);
+                var t2 = new Task2(fTextBox.Text, x0, x1, exactTextBox.Text, yTextBox.Text, zTextBox.Text, h, pTextBox.Text, qTextBox.Text);
                 solveLabel.Text += t2.Run();
             }
         }

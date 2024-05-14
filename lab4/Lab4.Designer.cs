@@ -50,6 +50,10 @@
             this.zTextBox = new System.Windows.Forms.TextBox();
             this.yTextBox = new System.Windows.Forms.TextBox();
             this.fTextBox = new System.Windows.Forms.TextBox();
+            this.pLabel = new System.Windows.Forms.Label();
+            this.qLabel = new System.Windows.Forms.Label();
+            this.pTextBox = new System.Windows.Forms.TextBox();
+            this.qTextBox = new System.Windows.Forms.TextBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -193,9 +197,9 @@
             // 
             this.panel1.AutoScroll = true;
             this.panel1.Controls.Add(this.solveLabel);
-            this.panel1.Location = new System.Drawing.Point(16, 169);
+            this.panel1.Location = new System.Drawing.Point(16, 199);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(420, 534);
+            this.panel1.Size = new System.Drawing.Size(420, 504);
             this.panel1.TabIndex = 22;
             // 
             // solveLabel
@@ -244,11 +248,47 @@
             this.fTextBox.Size = new System.Drawing.Size(216, 20);
             this.fTextBox.TabIndex = 28;
             // 
+            // pLabel
+            // 
+            this.pLabel.AutoSize = true;
+            this.pLabel.Location = new System.Drawing.Point(16, 172);
+            this.pLabel.Name = "pLabel";
+            this.pLabel.Size = new System.Drawing.Size(24, 13);
+            this.pLabel.TabIndex = 29;
+            this.pLabel.Text = "p(x)";
+            // 
+            // qLabel
+            // 
+            this.qLabel.AutoSize = true;
+            this.qLabel.Location = new System.Drawing.Point(165, 172);
+            this.qLabel.Name = "qLabel";
+            this.qLabel.Size = new System.Drawing.Size(24, 13);
+            this.qLabel.TabIndex = 30;
+            this.qLabel.Text = "q(x)";
+            // 
+            // pTextBox
+            // 
+            this.pTextBox.Location = new System.Drawing.Point(64, 169);
+            this.pTextBox.Name = "pTextBox";
+            this.pTextBox.Size = new System.Drawing.Size(76, 20);
+            this.pTextBox.TabIndex = 31;
+            // 
+            // qTextBox
+            // 
+            this.qTextBox.Location = new System.Drawing.Point(204, 169);
+            this.qTextBox.Name = "qTextBox";
+            this.qTextBox.Size = new System.Drawing.Size(76, 20);
+            this.qTextBox.TabIndex = 32;
+            // 
             // Lab4
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(462, 715);
+            this.Controls.Add(this.qTextBox);
+            this.Controls.Add(this.pTextBox);
+            this.Controls.Add(this.qLabel);
+            this.Controls.Add(this.pLabel);
             this.Controls.Add(this.fTextBox);
             this.Controls.Add(this.yTextBox);
             this.Controls.Add(this.zTextBox);
@@ -303,6 +343,10 @@
         private System.Windows.Forms.TextBox zTextBox;
         private System.Windows.Forms.TextBox yTextBox;
         private System.Windows.Forms.TextBox fTextBox;
+        private System.Windows.Forms.Label pLabel;
+        private System.Windows.Forms.Label qLabel;
+        private System.Windows.Forms.TextBox pTextBox;
+        private System.Windows.Forms.TextBox qTextBox;
     }
 }
 

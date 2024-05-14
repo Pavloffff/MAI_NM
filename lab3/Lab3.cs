@@ -351,6 +351,27 @@ namespace app
                 solveLabel.Text += t4.Run(1);
                 solveLabel.Text += t4.Run(2);
             }
+            else if (methodComboBox.Text == "Integrate")
+            {
+                List<double> x = new List<double>();
+                for (int i = 0; i < n; i++)
+                {
+                    if (xGridView.Rows[0].Cells[i].Value != null)
+                    {
+                        x.Add(Convert.ToDouble(xGridView.Rows[0].Cells[i].Value));
+                    }
+                }
+                h1 = 0.5;
+                h1TextBox.Text = h1.ToString();
+                h2 = 0.25;
+                h2TextBox.Text = h2.ToString();
+                Lexer lexer = new Lexer();
+                Parser parser = new Parser();
+                var fX = lexer.Run(yTextBox.Text);
+                fX = parser.ToPostfix(fX);
+                var t5 = new Task5(x, fX);
+                solveLabel.Text += t5.Run(h1, h2);
+            }
         }
 
         private void drawButton_Click(object sender, EventArgs e)
