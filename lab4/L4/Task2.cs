@@ -134,51 +134,51 @@ namespace WindowsFormsApp1.L4
         public string ShootingMethod()
         {
             string res = "Shooting method:\n\n";
-            double leftSolve = (c0[2] - (c0[1] / h) * solver.Solve(exactTokens, h, 0, 0)) / (c0[0] + (c0[1] / h));
             double eta1 = 1.0, eta2 = 0.8;
-            var y1 = RungeKuttaMethod(leftSolve, eta1);
-            var y2 = RungeKuttaMethod(leftSolve, eta2);
-            double phi1 = y1.Item1 - (c1[2] + (c1[1] / h) * y1.Item2) / (c1[0] + (c1[1] / h));
-            double phi2 = y2.Item1 - (c1[2] + (c1[1] / h) * y2.Item2) / (c1[0] + (c1[1] / h));
+            var y1 = RungeKuttaMethod(c0[2], eta1);
+            var y2 = RungeKuttaMethod(c0[2], eta2);
             res += PrintStringShooting("j", "η(j)", "y", "Ф(η(о))");
             res += "\n";
             int j = 0;
-
-            while (Math.Abs(phi1 - phi2) > h / 10)
+            
+            while (true)
             {
-                res += PrintStringShooting(j.ToString(), Str.Parse(eta1), Str.Parse(y1.Item1), Str.Parse(phi1));
-                res += PrintStringShooting(j.ToString(), Str.Parse(eta2), Str.Parse(y2.Item1), Str.Parse(phi2));
+                res += PrintStringShooting(j.ToString(), Str.Parse(eta1), Str.Parse(y1.Item1), "");
 
                 double etaTmp = eta2;
-                eta2 -= (eta2 - eta1) / (phi2 - phi1) * phi2;
+                eta2 -= (y2.Item1 - c1[2]) * (eta2 - eta1) / ((y2.Item1 - c1[2]) - (y1.Item1 - c1[2]));
                 eta1 = etaTmp;
-                y1 = RungeKuttaMethod(leftSolve, eta1);
-                y2 = RungeKuttaMethod(leftSolve, eta2);
-                phi1 = y1.Item1 - (c1[2] + (c1[1] / h) * y1.Item2) / (c1[0] + (c1[1] / h));
-                phi2 = y2.Item1 - (c1[2] + (c1[1] / h) * y2.Item2) / (c1[0] + (c1[1] / h));
+                y1 = RungeKuttaMethod(c0[2], eta1);
+                y2 = RungeKuttaMethod(c0[2], eta2);
                 j++;
+                if (Math.Abs(y2.Item1 - c1[2]) < h / 10)
+                {
+                    break;
+                }
             }
-            res += PrintStringShooting(j.ToString(), Str.Parse(eta1), Str.Parse(y1.Item1), Str.Parse(phi1));
-            res += PrintStringShooting(j.ToString(), Str.Parse(eta2), Str.Parse(y2.Item1), Str.Parse(phi2));
+            res += PrintStringShooting(j.ToString(), Str.Parse(eta1), Str.Parse(y1.Item1), "");
+            res += PrintStringShooting(j.ToString(), Str.Parse(eta2), Str.Parse(y2.Item1), "");
             res += "\ny = ";
-            double ans = RungeKuttaMethod(leftSolve, eta2).Item1;
+            double ans = RungeKuttaMethod(c0[2], eta2).Item1;
             res += ans.ToString();
             res += "\n";
-            var y1_h = RungeKuttaMethod(leftSolve, eta2);
+            var y1_h = RungeKuttaMethod(c0[2], eta2);
             double h2 = h;
             h = h / 2;
-            var y2_h = RungeKuttaMethod(leftSolve, eta2);
+            var y2_h = RungeKuttaMethod(c0[2], eta2);
             h = h2;
             double y_h = y1_h.Item1;
             double y_2h = y2_h.Item1;
             double errorShooting = (y_h - y_2h) / (Math.Pow(2, 4) - 1);
             res += $"Estimated error using Runge-Romberg for Shooting Method: {errorShooting}\n";
             res += "\n";
-
+            res += "\n";
+            
             return res;
         }
 
         public Vector FiniteDifferenceMethod(double _h)  // [y; y'; c]
+        //public string FiniteDifferenceMethod(double _h)  // [y; y'; c]
         {
             int n = Convert.ToInt32((x1 - x0) / _h);
             Linal.Matrix A = new Linal.Matrix(n + 1);
@@ -196,9 +196,19 @@ namespace WindowsFormsApp1.L4
                 x += _h;
             }
             A[n, n - 1] = (-1) * c1[1];
-            A[n, n] = c0[1] + _h * c1[1];
+            A[n, n] = c0[1] * _h + c1[1];
             B[n] = _h * c1[2];
-           
+            
+            string res = string.Empty;
+
+            res += A.ToString();
+
+            res += "\n\n";
+
+            res += B.ToString();
+            res += "\n";
+            res +=  TMA.Solve(A, B).ToString();
+            //return res;
             return TMA.Solve(A, B);
         }
 
@@ -209,7 +219,16 @@ namespace WindowsFormsApp1.L4
             res += ShootingMethod();
 
             res += "Finite Difference method:\n\n";
-            
+            //res += FiniteDifferenceMethod(h);
+            //res += "\n";
+            //double x = x0;
+            //while (x <= x1)
+            //{
+            //    res += solver.Solve(exactTokens, x, 0, 0);
+            //    res += " ";
+            //    x += h;
+            //}
+            //res += "\n";    
             Vector ansFD = FiniteDifferenceMethod(h);
             
             double x = x0;
@@ -221,10 +240,11 @@ namespace WindowsFormsApp1.L4
                 x += h;
             }
 
+
             Vector ansFD2 = FiniteDifferenceMethod(h / 2);
             int n2 = Convert.ToInt32((x1 - x0) / (h / 2));
             double errorFinite = (ansFD[n] - ansFD2[n2]) / (Math.Pow(2, 2) - 1);
-            res += $"Estimated error using Runge-Romberg for Finite Difference Method: {errorFinite}\n";
+            res += $"Estimated error using Runge-Romberg for Finite Difference Method: {errorFinite}\n\n";
 
             return res;
         }
