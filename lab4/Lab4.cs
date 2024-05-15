@@ -64,18 +64,23 @@ namespace WindowsFormsApp1
             }
             else if (methodComboBox.Text == "Boundary value")
             {
-                x0 = 0;
+                x0 = 1;
                 x0TextBox.Text = x0.ToString();
-                x1 = 1;
+                x1 = 3;
                 maxXTextBox.Text = x1.ToString();
                 h = 0.1;
                 hTextBox.Text = h.ToString();
-                fTextBox.Text = "(y - (x - 3) * y') / (x^2 - 1)";
-                yTextBox.Text = "1 * y(0) = 0";
-                zTextBox.Text = "1 * y'(1) + 1 * y(1) = -0,75";
-                pTextBox.Text = "-1 / (x^2 - 1)";
-                qTextBox.Text = "(x - 3) / (x^2 - 1)";
-                exactTextBox.Text = "x - 3 + (1 / (x + 1))";
+                //fTextBox.Text = "(y - (x - 3) * y') / (x^2 - 1)";   // -4*x*y'-(4*x^2)*y
+                fTextBox.Text = "(2 * y - 2 * (x + 1) * y') / (x * (2 * x + 1))"; 
+                //yTextBox.Text = "1 * y(0) = 0";                     // 1 * y'(0) = 1
+                yTextBox.Text = "1 * y'(1) = 0";                     // 1 * y'(0) = 1
+                //zTextBox.Text = "1 * y'(1) + 1 * y(1) = -0,75";     // 4 * y(2) - 1 * y'(2) = -29,4795
+                zTextBox.Text = "1 * y(3) - 1 * y'(3) = 3,44444444";     // 4 * y(2) - 1 * y'(2) = -29,4795
+                //pTextBox.Text = "-1 / (x^2 - 1)";                   // (4*x^2+2)
+                pTextBox.Text = "2 * (x + 1) / (x * (2 * x + 1))";                   // (4*x^2+2)
+                //qTextBox.Text = "(x - 3) / (x^2 - 1)";              // 4*x
+                qTextBox.Text = "-2 / (x * (2 * x + 1))";              // 4*x
+                exactTextBox.Text = "1 + x + (1 / x)";        // (1 + x) * exp(-x^2)
                 var t2 = new Task2(fTextBox.Text, x0, x1, exactTextBox.Text, yTextBox.Text, zTextBox.Text, h, pTextBox.Text, qTextBox.Text);
                 solveLabel.Text += t2.Run();
             }
