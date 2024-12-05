@@ -1,0 +1,10 @@
+C:\NM\MAI_NM\lab1\bin\Debug\app.exe.config
+C:\NM\MAI_NM\lab1\bin\Debug\app.exe
+C:\NM\MAI_NM\lab1\bin\Debug\app.pdb
+C:\NM\MAI_NM\lab1\obj\Debug\app.csproj.AssemblyReference.cache
+C:\NM\MAI_NM\lab1\obj\Debug\app.Lab1.resources
+C:\NM\MAI_NM\lab1\obj\Debug\app.Properties.Resources.resources
+C:\NM\MAI_NM\lab1\obj\Debug\app.csproj.GenerateResource.cache
+C:\NM\MAI_NM\lab1\obj\Debug\app.csproj.CoreCompileInputs.cache
+C:\NM\MAI_NM\lab1\obj\Debug\app.exe
+C:\NM\MAI_NM\lab1\obj\Debug\app.pdb
